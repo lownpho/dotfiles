@@ -1,0 +1,4 @@
+**/nvim-pack-lock.json
+
+*.bak
+*.bak/
