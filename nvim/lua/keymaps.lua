@@ -19,4 +19,3 @@ map("n", "<leader>nh", ":nohlsearch<CR>", { desc = "Clear search highlights" })
 -- System clipboard
 map("v", "<leader>y", [["+y]], { desc = "Copy to system clipboard" })
 map("n", "<leader>p", [["+p]], { desc = "Paste from system clipboard" })
-
