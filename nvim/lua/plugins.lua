@@ -1,10 +1,14 @@
+local map = vim.keymap.set
+
 vim.pack.add({
 	{ src = "https://github.com/catppuccin/nvim" },
 	{ src = "https://github.com/nvim-lualine/lualine.nvim" },
-	-- fugitive, gitsigns
-	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" },
 	{ src = "https://github.com/folke/which-key.nvim" },
+
+	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" },
 	{ src = "https://github.com/stevearc/oil.nvim" },
+	{ src = "https://github.com/lewis6991/gitsigns.nvim" },
+
 	{ src = "https://github.com/neovim/nvim-lspconfig" },
 	{ src = "https://github.com/stevearc/conform.nvim" },
 	{ src = "https://github.com/williamboman/mason.nvim" },
@@ -15,7 +19,6 @@ vim.pack.add({
 	{ src = "https://github.com/LinArcX/telescope-env.nvim" },
 	{ src = "https://github.com/nvim-telescope/telescope.nvim" },
 
-	-- Completion plugins
 	{ src = "https://github.com/hrsh7th/nvim-cmp" },
 	{ src = "https://github.com/hrsh7th/cmp-nvim-lsp" },
 	{ src = "https://github.com/L3MON4D3/LuaSnip" },
@@ -75,7 +78,50 @@ require("oil").setup({
 		border = "rounded",
 	},
 })
-vim.keymap.set("n", "//", require("oil").open, { desc = "Open oil" })
+map("n", "//", require("oil").open, { desc = "Open oil" })
+
+require("gitsigns").setup({
+	signs = {
+		add = { text = "+" },
+		change = { text = "~" },
+		delete = { text = "-" },
+		topdelete = { text = "‾" },
+		changedelete = { text = "~" },
+	},
+	current_line_blame = false,
+	preview_config = { border = "rounded" },
+})
+
+local gs = require("gitsigns")
+
+map("n", "]c", function()
+	if vim.wo.diff then
+		return "]c"
+	end
+	vim.schedule(function()
+		gs.next_hunk()
+	end)
+	return "<Ignore>"
+end, { expr = true, desc = "Next hunk" })
+
+map("n", "[c", function()
+	if vim.wo.diff then
+		return "[c"
+	end
+	vim.schedule(function()
+		gs.prev_hunk()
+	end)
+	return "<Ignore>"
+end, { expr = true, desc = "Previous hunk" })
+
+map("n", "<leader>hs", gs.stage_hunk, { desc = "[H]unk [S]tage" })
+map("n", "<leader>hr", gs.reset_hunk, { desc = "[H]unk [R]eset" })
+map("n", "<leader>hu", gs.undo_stage_hunk, { desc = "[H]unk [U]ndo stage" })
+map("n", "<leader>hp", gs.preview_hunk, { desc = "[H]unk [P]review" })
+map("n", "<leader>hb", function()
+	gs.blame_line({ full = true })
+end, { desc = "[H]unk [B]lame" })
+map("n", "<leader>hd", gs.diffthis, { desc = "[H]unk [D]iff" })
 
 require("mason").setup()
 require("mason-lspconfig").setup({
@@ -125,19 +171,19 @@ telescope.setup({
 		preview = { treesitter = false },
 	},
 })
-vim.keymap.set("n", "<leader>sh", telescope_builtin.help_tags, { desc = "[S]earch [H]elp" })
--- vim.keymap.set("n", "<leader>sk", telescope_builtin.keymaps, { desc = "[S]earch [K]eymaps" })
--- vim.keymap.set("n", "<leader>ss", telescope_builtin.builtin, { desc = "[S]earch [S]elect telescope builtin" })
-vim.keymap.set("n", "<leader>sf", telescope_builtin.find_files, { desc = "[S]earch [F]iles" })
-vim.keymap.set("n", "<leader>sw", telescope_builtin.grep_string, { desc = "[S]earch current [W]ord" })
-vim.keymap.set("n", "<leader>sg", telescope_builtin.live_grep, { desc = "[S]earch by [G]rep" })
-vim.keymap.set("n", "<leader>sd", telescope_builtin.diagnostics, { desc = "[S]earch [D]iagnostics" })
-vim.keymap.set("n", "<leader>sr", telescope_builtin.resume, { desc = "[S]earch [R]esume" })
-vim.keymap.set("n", "<leader>s.", telescope_builtin.oldfiles, { desc = "[S]earch [.] recently opened files" })
-vim.keymap.set("n", "<leader><leader>", telescope_builtin.buffers, { desc = "[  ] Find existing buffers" })
-vim.keymap.set("n", "<leader>se", telescope.extensions.env.env, { desc = "[S]earch [E]nvironment variables" })
+map("n", "<leader>sh", telescope_builtin.help_tags, { desc = "[S]earch [H]elp" })
+-- map("n", "<leader>sk", telescope_builtin.keymaps, { desc = "[S]earch [K]eymaps" })
+-- map("n", "<leader>ss", telescope_builtin.builtin, { desc = "[S]earch [S]elect telescope builtin" })
+map("n", "<leader>sf", telescope_builtin.find_files, { desc = "[S]earch [F]iles" })
+map("n", "<leader>sw", telescope_builtin.grep_string, { desc = "[S]earch current [W]ord" })
+map("n", "<leader>sg", telescope_builtin.live_grep, { desc = "[S]earch by [G]rep" })
+map("n", "<leader>sd", telescope_builtin.diagnostics, { desc = "[S]earch [D]iagnostics" })
+map("n", "<leader>sr", telescope_builtin.resume, { desc = "[S]earch [R]esume" })
+map("n", "<leader>s.", telescope_builtin.oldfiles, { desc = "[S]earch [.] recently opened files" })
+map("n", "<leader><leader>", telescope_builtin.buffers, { desc = "[  ] Find existing buffers" })
+map("n", "<leader>se", telescope.extensions.env.env, { desc = "[S]earch [E]nvironment variables" })
 -- Fuzzyly find in current buffer
-vim.keymap.set("n", "<leader>/", function()
+map("n", "<leader>/", function()
 	telescope_builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
 		winblend = 10,
 		previewer = false,
@@ -184,6 +230,6 @@ require("conform").setup({
 		markdown = { "prettierd" },
 	},
 })
-vim.keymap.set("n", "<leader>F", function()
+map("n", "<leader>F", function()
 	require("conform").format({ async = false })
 end, { desc = "[F]ormat current buffer" })
