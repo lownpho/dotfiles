@@ -8,6 +8,7 @@ vim.pack.add({
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" },
 	{ src = "https://github.com/stevearc/oil.nvim" },
 	{ src = "https://github.com/lewis6991/gitsigns.nvim" },
+	{ src = "https://github.com/tpope/vim-fugitive" },
 
 	{ src = "https://github.com/neovim/nvim-lspconfig" },
 	{ src = "https://github.com/stevearc/conform.nvim" },
@@ -122,6 +123,14 @@ map("n", "<leader>hb", function()
 	gs.blame_line({ full = true })
 end, { desc = "[H]unk [B]lame" })
 map("n", "<leader>hd", gs.diffthis, { desc = "[H]unk [D]iff" })
+
+-- No need to require Fugitive
+map("n", "<leader>gs", ":Git<CR>", { desc = "[G]it [S]tatus" })
+map("n", "<leader>gl", ":Git log --oneline -10 %<CR>", { desc = "[G]it [L]og (current file)" })
+-- Friendly reminder: :Gvdfiffsplit!<CR> is your friendd
+map("n", "<leader>gc", ":Git checkout<Space>", { desc = "[G]it [C]heckout branch" })
+map("n", "<leader>gp", ":Git push<CR>", { desc = "[G]it [P]ush" })
+map("n", "<leader>gu", ":Git pull<CR>", { desc = "[G]it p[U]ll" })
 
 require("mason").setup()
 require("mason-lspconfig").setup({
