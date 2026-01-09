@@ -81,18 +81,22 @@ DIM='\[\033[2m\]'
 git_info() {
     local branch
     local status
+    local git_status
 
+    # Get current branch
     branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
 
     if [ -z "$branch" ]; then
         return # Not in a git repository
     fi
 
-    # Check for uncommitted changes
-    if ! git diff --quiet 2>/dev/null || ! git diff --cached --quiet 2>/dev/null; then
-        status="${RED}✗${RESET}"
+    # Use git status to check for any changes (tracked, untracked, staged)
+    git_status=$(git status --porcelain 2>/dev/null)
+
+    if [ -z "$git_status" ]; then
+        status="${GREEN}✓${RESET}" # Clean
     else
-        status="${GREEN}✓${RESET}"
+        status="${RED}✗${RESET}" # Dirty (includes untracked files)
     fi
 
     echo " ${CYAN}(${BOLD}${branch}${RESET}${CYAN})${status}"
