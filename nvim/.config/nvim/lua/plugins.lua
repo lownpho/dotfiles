@@ -142,8 +142,17 @@ require("mason-lspconfig").setup({
 		"marksman",
 		"jsonls",
 		"yamlls",
+		"verible",
 	},
 	automatic_installation = true,
+	handlers = {
+		function(server_name)
+			require("lspconfig")[server_name].setup({
+				on_attach = on_attach,
+				capabilities = capabilities,
+			})
+		end,
+	},
 })
 
 require("nvim-treesitter.configs").setup({
@@ -237,6 +246,8 @@ require("conform").setup({
 		json = { "jq" },
 		yaml = { "prettierd" },
 		markdown = { "prettierd" },
+		verilog = { "verible" },
+		systemverilog = { "verible" },
 	},
 })
 map("n", "<leader>F", function()
