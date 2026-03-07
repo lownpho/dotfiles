@@ -1,9 +1,9 @@
-#!/usr/bin/env bash
+how do#!/usr/bin/env bash
 set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGET="$HOME"
-ALL_PACKAGES=(bash nvim vim tmux)
+ALL_PACKAGES=(bash nvim vim tmux vscode)
 
 usage() {
   echo "Usage: $0 [options] [package...]"
@@ -44,6 +44,16 @@ STOW_FLAGS=(-d "$DOTFILES_DIR" -t "$TARGET")
 $DRY_RUN  && STOW_FLAGS+=(-n -v)
 $UNSTOW   && STOW_FLAGS+=(-D)
 
+VSCODE_EXTENSIONS=(
+  xaver.clang-format
+  ms-python.python
+  ms-python.black-formatter
+  foxundermoon.shell-format
+  esbenp.prettier-vscode
+  redhat.vscode-yaml
+  mshr-h.veriloghdl
+)
+
 for pkg in "${PACKAGES[@]}"; do
   if [[ ! -d "$DOTFILES_DIR/$pkg" ]]; then
     echo "Warning: package '$pkg' not found, skipping." >&2
@@ -52,3 +62,14 @@ for pkg in "${PACKAGES[@]}"; do
   echo "  stow $pkg"
   stow "${STOW_FLAGS[@]}" "$pkg"
 done
+
+if [[ " ${PACKAGES[*]} " == *" vscode "* ]] && ! $UNSTOW; then
+  if command -v code &>/dev/null; then
+    echo "  installing VSCode extensions..."
+    for ext in "${VSCODE_EXTENSIONS[@]}"; do
+      $DRY_RUN && echo "    code --install-extension $ext" || code --install-extension "$ext" --force 2>/dev/null
+    done
+  else
+    echo "Warning: 'code' not in PATH, skipping VSCode extensions." >&2
+  fi
+fi

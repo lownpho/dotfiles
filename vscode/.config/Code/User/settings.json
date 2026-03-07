@@ -1,0 +1,35 @@
+{
+    "workbench.colorTheme": "Rosé Pine",
+    "claudeCode.preferredLocation": "panel",
+
+    // UI
+    "editor.minimap.enabled": false,
+    "breadcrumbs.enabled": false,
+    "workbench.startupEditor": "none",
+    "editor.renderWhitespace": "trailing",
+    "editor.scrollBeyondLastLine": false,
+
+    // Editor
+    "editor.tabSize": 4,
+    "editor.formatOnSave": true,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.autoSave": "afterDelay",
+
+    // Formatters
+    "[c]":           { "editor.defaultFormatter": "xaver.clang-format" },
+    "[cpp]":         { "editor.defaultFormatter": "xaver.clang-format" },
+    "[python]":      { "editor.defaultFormatter": "ms-python.black-formatter" },
+    "[shellscript]": { "editor.defaultFormatter": "foxundermoon.shell-format" },
+    "[json]":        { "editor.defaultFormatter": "vscode.json-language-features" },
+    "[yaml]":        { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+    "[markdown]":    { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+    "[verilog]":       { "editor.defaultFormatter": "mshr-h.veriloghdl" },
+    "[systemverilog]": { "editor.defaultFormatter": "mshr-h.veriloghdl" },
+
+    // Verilog/SystemVerilog
+    "verilog.formatting.formatter": "verible-verilog-format",
+    "verilog.linting.linter": "verible",
+
+    "telemetry.telemetryLevel": "off",
+}
