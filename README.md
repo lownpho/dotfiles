@@ -1,10 +1,27 @@
-# Dotfiles, yay!
+# Dotfiles
 
-## Stowing
-The folder structure is odd to make easier symlinking with `stow`.
+My personal configs, managed with [GNU Stow](https://www.gnu.org/software/stow/).
 
-For example to stow neovim config:
+## Setup
+
+```bash
+git clone <repo> ~/Workspace/dotfiles
+cd ~/Workspace/dotfiles
+./install.sh
 ```
-stow -t ~ nvim
+
+## Usage
+
+```bash
+./install.sh              # stow everything
+./install.sh nvim bash    # stow specific packages
+./install.sh -n           # dry-run
+./install.sh -D nvim      # unstow
 ```
 
+## Packages
+
+- `bash/` — `.bashrc`
+- `nvim/` — `.config/nvim/` (Lua, `vim.pack`)
+- `vim/` — `.vimrc` (fallback)
+- `tmux/` — `.tmux.conf` (prefix: `C-a`)
