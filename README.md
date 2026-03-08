@@ -5,23 +5,17 @@ My personal configs, managed with [GNU Stow](https://www.gnu.org/software/stow/)
 ## Setup
 
 ```bash
-git clone <repo> ~/Workspace/dotfiles
+git clone git@github.com:lownpho/dotfiles.git ~/Workspace/dotfiles
 cd ~/Workspace/dotfiles
-./install.sh
+./scripts/install-deps.sh   # install system requirements (apt/dnf/pacman/brew)
+./scripts/install.sh        # symlink dotfiles into $HOME
 ```
 
 ## Usage
 
 ```bash
-./install.sh              # stow everything
-./install.sh nvim bash    # stow specific packages
-./install.sh -n           # dry-run
-./install.sh -D nvim      # unstow
+./scripts/install.sh              # stow everything
+./scripts/install.sh nvim bash    # stow specific packages
+./scripts/install.sh -n           # dry-run
+./scripts/install.sh -D nvim      # unstow
 ```
-
-## Packages
-
-- `bash/` — `.bashrc`
-- `nvim/` — `.config/nvim/` (Lua, `vim.pack`)
-- `vim/` — `.vimrc` (fallback)
-- `tmux/` — `.tmux.conf` (prefix: `C-a`)
