@@ -1,4 +1,4 @@
-how do#!/usr/bin/env bash
+#!/usr/bin/env bash
 set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -54,13 +54,43 @@ VSCODE_EXTENSIONS=(
   mshr-h.veriloghdl
 )
 
+stow_package() {
+  local pkg="$1"
+  local sim_output exit_code=0
+
+  sim_output=$(stow "${STOW_FLAGS[@]}" -n -v "$pkg" 2>&1) || exit_code=$?
+
+  if [[ $exit_code -ne 0 ]] || echo "$sim_output" | grep -qiE "conflict|existing target"; then
+    echo "  Conflicts detected for '$pkg':"
+    echo "$sim_output" | grep -iE "conflict|existing target" | sed 's/^/    /'
+    read -rp "  Overwrite conflicting files? [y/N] " answer
+    if [[ ! "$answer" =~ ^[Yy]$ ]]; then
+      echo "  Skipping '$pkg'"
+      return
+    fi
+    # Remove conflicting target files so stow can create symlinks
+    while IFS= read -r f; do
+      echo "    removing $TARGET/$f"
+      $DRY_RUN || rm -rf "$TARGET/$f"
+    done < <(echo "$sim_output" | grep -oP "(?<=existing target is neither a link nor a stow directory: ).*")
+    while IFS= read -r f; do
+      echo "    removing $f"
+      $DRY_RUN || rm -rf "$f"
+    done < <(echo "$sim_output" | grep -oP "^CONFLICT: \K[^ ]+")
+  fi
+
+  if ! $DRY_RUN; then
+    stow "${STOW_FLAGS[@]}" "$pkg"
+  fi
+}
+
 for pkg in "${PACKAGES[@]}"; do
   if [[ ! -d "$DOTFILES_DIR/$pkg" ]]; then
     echo "Warning: package '$pkg' not found, skipping." >&2
     continue
   fi
   echo "  stow $pkg"
-  stow "${STOW_FLAGS[@]}" "$pkg"
+  stow_package "$pkg"
 done
 
 if [[ " ${PACKAGES[*]} " == *" vscode "* ]] && ! $UNSTOW; then
